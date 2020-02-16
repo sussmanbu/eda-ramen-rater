@@ -1,0 +1,41 @@
+---
+title: "EDA: Ramen Rater"
+output: html_notebook
+---
+
+
+```{r setup}
+library(tidyverse)
+```
+
+This code loads and cleans the ramen data set.
+
+```{r load}
+ramen <- read_csv("ramen-ratings.csv",
+                col_types = "iccccdc",
+                na = c("Unrated", "\n")) %>%
+  rename(id = `Review #`, top_ten = `Top Ten`) %>%
+  mutate(top_ten_year = str_sub(top_ten, end=4) %>%
+           as.integer(),
+         top_ten = str_sub(7) %>%
+           as.integer()) %>%
+  mutate_at(vars(Brand, Variety, Style, Country),tolower)
+names(ramen) <- tolower(names(ramen))
+```
+
+Ramen is now a tibble with reasonably easy to use columns all letters are now lower case and numbers are correctly coded as doubles or integers
+
+The data set below splits up the variety column so each word in the variety is in its own row this will make it easier to detect words.
+
+```{r long}
+ramen_long <- ramen %>%
+  mutate(variety = str_split(variety, " ")) %>%
+  unnest(variety)
+```
+
+For example here are all the varieties with chicken
+
+```{r chicken}
+ramen_long %>% group_by(variety) %>%
+  filter(variety == "chicken")
+```
