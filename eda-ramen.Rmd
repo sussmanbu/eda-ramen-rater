@@ -17,7 +17,7 @@ ramen <- read_csv("ramen-ratings.csv",
   rename(id = `Review #`, top_ten = `Top Ten`) %>%
   mutate(top_ten_year = str_sub(top_ten, end=4) %>%
            as.integer(),
-         top_ten = str_sub(7) %>%
+         top_ten = str_sub(top_ten, 7) %>%
            as.integer()) %>%
   mutate_at(vars(Brand, Variety, Style, Country),tolower)
 names(ramen) <- tolower(names(ramen))
